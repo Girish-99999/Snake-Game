@@ -1,3 +1,4 @@
+#Snake game!
 import turtle
 import random
 segments = []
@@ -103,16 +104,20 @@ def move():
 
 def up():
     global direction
-    direction = 90
+    if direction!=270:
+        direction = 90
 def down():
     global direction
-    direction = 270
+    if direction!=90:
+        direction = 270
 def left():
     global direction
-    direction = 180
+    if direction!=0:
+        direction = 180
 def right():
     global direction
-    direction = 0
+    if direction!=180:
+        direction = 0
 
 for i in range(3):
     segment = turtle.Turtle()
