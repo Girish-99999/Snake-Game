@@ -3,6 +3,7 @@ import turtle
 import random
 segments = []
 score = 0
+highest_score=0
 end_position=0
 direction = 90
 turtle.setup(width=720, height=640)
@@ -54,15 +55,21 @@ menu_text.goto(190, 283)
 menu_text.write("HARD", font=("Arial", 15, "bold"))
 menu_text.goto(270,283)
 menu_text.write("END", font=("Arial", 15, "bold"))
+h_s=turtle.Turtle()
+h_s.color("white")
+h_s.penup()
+h_s.hideturtle()
+h_s.goto(-60,283)
+h_s.write("H.S : "+str(highest_score),font=("Arial",15,"bold"))
 joke=True
 def mouse_click(x, y):
     global pixels,joke
     print(x,y)
     if running==False:
-        if 16<x<68 and 290<y<310:
+        if 18<x<68 and 290<y<310:
             pixels=300
             start_game()
-        if 87<x<171 and 290<y<310:
+        if 87<x<170 and 290<y<310:
             pixels=200
             start_game()
         if 188<x<242 and 290<y<310:
@@ -73,7 +80,7 @@ def mouse_click(x, y):
                 joke=True
                 pixels=140
             start_game()
-        elif 250<x<290 and 290<y<310:
+        elif 267<309 and 290<y<310:
             end_game()
 
 def end_game():
@@ -81,11 +88,11 @@ def end_game():
         turtle.bye()
 
 def start_game():
-    global running,pixels
+    global running,pixels,direction
     if running==False:
         for segment in segments:
             segment.hideturtle()
-
+        direction=90
         running=True
         segments.clear()
         create_snake()
@@ -118,7 +125,14 @@ def pulse_food():
     turtle.ontimer(pulse_food, 50)
 
 def collision():
-    global collision,running,score
+    global running,score,highest_score
+    if score>highest_score:
+        highest_score=score
+        h_s.clear()
+        h_s.write(
+        "H.S : " + str(highest_score),
+        font=("Arial", 15, "bold")
+    )
     head = segments[0]
     if head.xcor()>350 or head.xcor()<-340 or head.ycor()>270 or head.ycor()<-290:
         score_writer.clear()
@@ -126,12 +140,12 @@ def collision():
         running=False
         if joke:
             score_writer.write(
-                "GAME OVER :) Collided with wall!",
+                "Game Over, Collided with wall!",
                     font=("Arial", 15, "normal")
             )
         else:
             score_writer.write(
-                "GAME OVER :) Sorry i joked!",
+                "Game Over:) Sorry i joked!",
                     font=("Arial", 15, "normal")
             )
         return True
@@ -141,7 +155,7 @@ def collision():
             score=0
             running=False
             score_writer.write(
-                "GAME OVER :) Collided with own body!",
+                "Game,Over, Collided with own body!",
                     font=("Arial", 15, "normal")
             )
             return True
