@@ -46,16 +46,35 @@ menu_text = turtle.Turtle()
 menu_text.hideturtle()
 menu_text.penup()
 menu_text.color("white")
-menu_text.goto(130,283)
-menu_text.write("START", align="center", font=("Arial", 15, "bold"))
-menu_text.goto(270, 283)
-menu_text.write("END", align="center", font=("Arial", 15, "bold"))
-
+menu_text.goto(90,283)
+menu_text.write("MEDIUM", font=("Arial", 15, "bold"))
+menu_text.goto(20, 283)
+menu_text.write("EASY", font=("Arial", 15, "bold"))
+menu_text.goto(190, 283)
+menu_text.write("HARD", font=("Arial", 15, "bold"))
+menu_text.goto(270,283)
+menu_text.write("END", font=("Arial", 15, "bold"))
+joke=True
 def mouse_click(x, y):
-    if 100<x<160 and 290<y<310:
-        start_game()
-    elif 250<x<290 and 290<y<310:
-        end_game()
+    global pixels,joke
+    print(x,y)
+    if running==False:
+        if 16<x<68 and 290<y<310:
+            pixels=300
+            start_game()
+        if 87<x<171 and 290<y<310:
+            pixels=200
+            start_game()
+        if 188<x<242 and 290<y<310:
+            if joke:
+                pixels=20
+                joke=False
+            else:
+                joke=True
+                pixels=140
+            start_game()
+        elif 250<x<290 and 290<y<310:
+            end_game()
 
 def end_game():
     if running==False:
@@ -67,7 +86,6 @@ def start_game():
         for segment in segments:
             segment.hideturtle()
 
-        pixels=200
         running=True
         segments.clear()
         create_snake()
@@ -102,14 +120,20 @@ def pulse_food():
 def collision():
     global collision,running,score
     head = segments[0]
-    if head.xcor()>340 or head.xcor()<-340 or head.ycor()>260 or head.ycor()<-280:
+    if head.xcor()>350 or head.xcor()<-340 or head.ycor()>270 or head.ycor()<-290:
         score_writer.clear()
         score=0
         running=False
-        score_writer.write(
-            "GAME OVER :)",
-                font=("Arial", 15, "normal")
-        )
+        if joke:
+            score_writer.write(
+                "GAME OVER :) Collided with wall!",
+                    font=("Arial", 15, "normal")
+            )
+        else:
+            score_writer.write(
+                "GAME OVER :) Sorry i joked!",
+                    font=("Arial", 15, "normal")
+            )
         return True
     for segment in segments[1:]:
         if head.distance(segment) < 10:
@@ -117,7 +141,7 @@ def collision():
             score=0
             running=False
             score_writer.write(
-                "GAME OVER :)",
+                "GAME OVER :) Collided with own body!",
                     font=("Arial", 15, "normal")
             )
             return True
@@ -137,8 +161,8 @@ def win():
         score+=1
         increase_speed()
         print("Food Eaten!")
-        x=random.randrange(-320,321,20)
-        y=random.randrange(-260,261,20)
+        x=random.randrange(-320,320,20)
+        y=random.randrange(-260,260,20)
         food.goto(x,y)
         segments.append(body())
     score_writer.clear()
@@ -187,7 +211,6 @@ turtle.onkeypress(left, "Left")
 turtle.onkeypress(right, "Right")
 turtle.onkeypress(start_game,"n")
 turtle.onkeypress(end_game,"e")
-turtle.onscreenclick(mouse_click)
 turtle.onscreenclick(mouse_click)
 pulse_food()
 move()
