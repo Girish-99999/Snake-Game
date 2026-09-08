@@ -34,6 +34,57 @@ line.forward(700)
 line.right(90)
 line.forward(560)
 line.hideturtle()
+pixels=200
+running=True
+'''start_button=turtle.Turtle()
+start_button.shape("square")
+start_button.color("white")
+start_button.penup()
+start_button.goto(200, 290)
+start_button.shapesize(stretch_wid=1.7, stretch_len=15)'''
+menu_text = turtle.Turtle()
+menu_text.hideturtle()
+menu_text.penup()
+menu_text.color("white")
+menu_text.goto(130,283)
+menu_text.write("START", align="center", font=("Arial", 15, "bold"))
+menu_text.goto(270, 283)
+menu_text.write("END", align="center", font=("Arial", 15, "bold"))
+
+def mouse_click(x, y):
+    if 100<x<160 and 290<y<310:
+        start_game()
+    elif 250<x<290 and 290<y<310:
+        end_game()
+
+def end_game():
+    if running==False:
+        turtle.bye()
+
+def start_game():
+    global running,pixels
+    if running==False:
+        for segment in segments:
+            segment.hideturtle()
+
+        pixels=200
+        running=True
+        segments.clear()
+        create_snake()
+        move()
+
+def increase_speed():
+    global pixels
+    pixels-=5
+
+def create_snake():
+    for i in range(3):
+        segment = turtle.Turtle()
+        segment.shape("square")
+        segment.color("blue")
+        segment.penup()
+        segment.goto(-20*i, 0)
+        segments.append(segment)
 
 def pulse_food():
     global food_size, growing
@@ -49,19 +100,26 @@ def pulse_food():
     turtle.ontimer(pulse_food, 50)
 
 def collision():
+    global collision,running,score
     head = segments[0]
     if head.xcor()>340 or head.xcor()<-340 or head.ycor()>260 or head.ycor()<-280:
         score_writer.clear()
+        score=0
+        running=False
         score_writer.write(
-            "Score: " + str(score)+"  Game Over Bro :) Snake Collided With Boundary!",
-            font=("Arial", 16, "normal"))
+            "GAME OVER :)",
+                font=("Arial", 15, "normal")
+        )
         return True
     for segment in segments[1:]:
         if head.distance(segment) < 10:
             score_writer.clear()
+            score=0
+            running=False
             score_writer.write(
-            "Score: " + str(score)+"  Game Over Bro :) Snake Collided With Own Body!",
-            font=("Arial", 16, "normal"))
+                "GAME OVER :)",
+                    font=("Arial", 15, "normal")
+            )
             return True
     return False
 
@@ -77,6 +135,7 @@ def win():
     if segments[0].distance(food)<20:
         global score
         score+=1
+        increase_speed()
         print("Food Eaten!")
         x=random.randrange(-320,321,20)
         y=random.randrange(-260,261,20)
@@ -100,7 +159,7 @@ def move():
         return
     win()
     turtle.update()
-    turtle.ontimer(move,200)
+    turtle.ontimer(move,pixels)
 
 def up():
     global direction
@@ -119,20 +178,17 @@ def right():
     if direction!=180:
         direction = 0
 
-for i in range(3):
-    segment = turtle.Turtle()
-    segment.shape("square")
-    segment.color("cyan")
-    segment.penup()
-    segment.goto(-20*i, 0)
-    segments.append(segment)
+create_snake()
 
 turtle.listen()
-turtle.onkey(up, "Up")
-turtle.onkey(down, "Down")
-turtle.onkey(left, "Left")
-turtle.onkey(right, "Right")
-
+turtle.onkeypress(up, "Up")
+turtle.onkeypress(down, "Down")
+turtle.onkeypress(left, "Left")
+turtle.onkeypress(right, "Right")
+turtle.onkeypress(start_game,"n")
+turtle.onkeypress(end_game,"e")
+turtle.onscreenclick(mouse_click)
+turtle.onscreenclick(mouse_click)
 pulse_food()
 move()
 
